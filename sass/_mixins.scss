@@ -1,0 +1,165 @@
+@use '_abstracts' as *;
+@use '_functions' as *;
+
+
+
+
+
+// MEDIA QUERIES
+
+@mixin width-below($width){
+    @media screen and (max-width: $width){
+        @content;
+    }
+}
+
+@mixin width-above($width){
+    @media screen and (min-width: $width){
+        @content;
+    }
+}
+
+@mixin height-below($height){
+    @media screen and (max-height: $height){
+        @content;
+    }
+}
+
+@mixin height-above($height){
+    @media screen and (min-height: $height){
+        @content;
+    }
+}
+
+@mixin area-below($width, $height){
+    @media screen and (max-width: $width) and (max-height: $height){
+        @content;
+    }
+}
+
+@mixin area-above($width, $height){
+    @media screen and (min-width: $width) and (min-height: $height){
+        @content;
+    }
+}
+
+
+
+
+
+// PSEUDO-CLASSES
+
+@mixin hover{
+    &:hover, &:focus-visible{
+        @content;
+    }
+}
+
+
+
+
+
+// CUSTOM PROPS GENERATION
+
+@mixin createVarSection($dictionary, $prefix, $dictionaryName, $oneLineLabel:false, $remSizesType: false, $quotes:false){
+    @if $oneLineLabel == true {
+        /* #{$dictionaryName} */
+    }@else{
+        /* 
+
+        #{$dictionaryName} 
+        */
+    }
+    @each $key, $value in $dictionary{
+        @if $value != "" and $value != 0 {
+            @if $remSizesType == true {
+                $remConversion: calc($value / 16);
+                $srtVar: inspect($remConversion);
+                $labelIndentation: stringRepeat("-", calc(8 - str-length($srtVar)));
+                --#{$prefix}-#{$key}: #{$remConversion}rem; /* #{$labelIndentation} #{$value}px */
+            }@else{
+                @if $quotes == true {
+                    --#{$prefix}-#{$key}: "#{$value}", sans-serif;
+                }@else{
+                    --#{$prefix}-#{$key}: #{$value};
+                }
+            }
+        }
+    }
+}
+
+@mixin createVarSection-nested($dictionary, $prefix, $dictionaryName){
+    /*
+
+    #{$dictionaryName} 
+    */
+    @each $category, $sub-dictionary in $dictionary{
+        /* #{$category} */
+        @each $key, $value in $sub-dictionary{
+            @if $value != "" and $value != 0 {
+                --#{$prefix}-#{$category}-#{$key}: #{$value};
+            }
+        }
+    }
+}
+
+@mixin customPropsGeneration{
+    // COLORS
+    @include createVarSection-nested($colors, clr, "COLOR VARIABLES");
+    /*
+
+    FONT VARIABLES 
+    */
+    @include createVarSection($font-families, ff, "Font families", true, $quotes:true);
+    @include createVarSection($font-sizes, fs, "Font sizes", true, $remSizesType:true);
+    @include createVarSection($font-weight, fw, "Font weights", true);
+    @include createVarSection($sizes, size, "Sizes", $remSizesType:true);
+}
+
+
+
+
+
+// UTILITY CLASSES
+
+@mixin utc-flex{
+    .flex{
+        display: flex;
+    }
+}
+
+@mixin utc-flex-center{
+    .flex-center{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+@mixin utc-grid{
+    .grid{
+        display: grid;
+    }
+}
+
+@mixin utc-sr-only{
+    .sr-only {
+        position: absolute ;
+        left: -10000px;
+        width: 1px;
+        height: 1px;
+        top: auto;
+        overflow: hidden;
+    }
+}
+
+
+
+
+// OTHERS
+
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

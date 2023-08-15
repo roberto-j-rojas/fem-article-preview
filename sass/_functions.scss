@@ -1,0 +1,18 @@
+// String repeater
+
+@function stringRepeat($text, $repsNumber){
+    $repeatedText: "";
+    @for $i from 1 to $repsNumber{
+        $repeatedText: #{$repeatedText}#{$text};
+    }
+    @return $repeatedText;
+}
+
+
+
+// pixels to relative units conversors
+
+@function toRem($value) {
+    $remValue: ($value / 16) + rem; 
+    @return $remValue;
+}
